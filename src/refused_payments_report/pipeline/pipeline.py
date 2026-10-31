@@ -16,9 +16,6 @@ class Pipeline:
         :Parâmetros:
         data_handler (Class): Classe para carga e escrita dos dados de pagamentos e pedidos
         data_transformer (Class): Classe para transformação dos dados de pagamentos e pedidos
-
-        :Retorno:
-        Não há retorno, apenas a materialização do relatório no caminho PATH_OUTPUT com as devidas transformações realizadas.
         """
 
         # Declaração de variáveis
@@ -68,7 +65,8 @@ class Pipeline:
             pedidos
             .transform(self.data_transformer.join_information, payments_df = pagamentos)
             .transform(self.data_transformer.priorization)
+            .transform(self.data_handler.apply_output_schema)
         )
 
         # Escrevendo o relatório na pasta de output
-        self.data_handler.write_parquet(dataframe=relatorio, path=PATH_OUTPUT)
+        self.data_handler.write_parquet(df=relatorio, path=PATH_OUTPUT)

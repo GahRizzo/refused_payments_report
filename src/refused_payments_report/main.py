@@ -1,12 +1,14 @@
 from session.spark_session import SparkSessionManager
-from config.settings import load_config
+from config.settings import Configs
 from io_utils.data_handler import DataHandler
 from processing.transformations import Transformation
 from pipeline.pipeline import Pipeline
 
 def main():
 
-    configs = load_config(path = "./config/settings.yaml")
+    configs_pipeline = Configs()
+    print(configs_pipeline)
+    configs = configs_pipeline.configs
 
     APP_NAME = configs.get("spark",{}).get("app_name")
 
