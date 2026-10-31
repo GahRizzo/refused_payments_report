@@ -66,7 +66,7 @@ class Pipeline:
         # Unificando os dados
         relatorio = (
             pedidos
-            .transform(self.data_transformer.join_information, payments_df = pagamentos_filtrados)
+            .transform(self.data_transformer.join_information, payments_df = pagamentos)
             .transform(self.data_transformer.priorization)
         )
 

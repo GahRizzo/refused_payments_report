@@ -23,7 +23,7 @@ class Transformation:
             )
         )
     
-    def year_orders_filter(self, target_year: int, df: DataFrame) -> DataFrame:
+    def year_orders_filter(self, df: DataFrame, target_year: int) -> DataFrame:
         """
         Filtrando os pedidos para um ano específico do relatório.
 
@@ -56,7 +56,7 @@ class Transformation:
             .filter(col("avaliacao_fraude.fraude") == False)
         )
     
-    def join_information(self, payments_df: DataFrame, orders_df: DataFrame) -> DataFrame:
+    def join_information(self, orders_df: DataFrame, payments_df: DataFrame) -> DataFrame:
         """
         Unificando as informações de pedidos e pagamentos em uma única tabela e selecione colunas de interesse
 
@@ -94,7 +94,7 @@ class Transformation:
         Dataframe ordenado segundo as colunas uf, formna_pagamento e valor_total
         """
         return (
-            dataframe
+            df
             .orderBy(
                 asc(col("uf")), 
                 asc(col("forma_pagamento")), 
