@@ -5,3 +5,6 @@ class DataHandlerException(Exception):
 class LoadSources(DataHandlerException):
     """Lançada especificamente ao falhar o carregamento dos datasets."""
     pass
+
+class WriteOutput(DataHandlerException):
+    """Falha na escrita do relatório de saída."""

@@ -4,8 +4,13 @@ from pyspark.sql.functions import col
 from pyspark.sql.types import (StructType, StructField, StringType, LongType, ArrayType, DateType, DoubleType, FloatType, TimestampType, BooleanType)
 from pyspark.errors import AnalysisException, PySparkException
 
-# Lib Dependencies
+# Self Dependencies
 from io_utils.exceptions import LoadSources
+
+# Python Dependencies
+import logging
+
+logger = logging.getLogger(__name__)
 
 class DataHandler:
     """
@@ -73,7 +78,9 @@ class DataHandler:
         """
         try:
             schema = self._get_schema_pagamentos()
-            return self.spark.read.option("compression", compression).json(path, schema=schema)
+            df = self.spark.read.option("compression", compression).json(path, schema=schema)
+            logger.info("DataFrame de pagamentos carregado com sucesso.")
+            return df
 
         except AnalysisException as e:
             raise LoadSources(f"Falha de análise ao carregar pagamentos em '{path}'") from e
@@ -96,7 +103,9 @@ class DataHandler:
         """
         try:
             schema = self._get_schema_pedidos()
-            return self.spark.read.option("compression", compression).csv(path, header=header, schema=schema, sep=sep)
+            df = self.spark.read.option("compression", compression).csv(path, header=header, schema=schema, sep=sep)
+            logger.info("DataFrame de pedidos carregado com sucesso.")
+            return df
 
         except AnalysisException as e:
             raise LoadSources(f"Falha de análise ao carregar pedidos em '{path}'") from e
@@ -116,9 +125,17 @@ class DataHandler:
         """
         schema = self._get_schema_output()
 
+        expected_columns = [field.name for field in schema.fields]
+        missing_columns = [name for name in expected_columns if name not in df.columns]
+
+        if missing_columns:
+            raise ValueError("Colunas obrigatórias ausentes no relatório: "f"{', '.join(missing_columns)}")
+
         return df.select(
             *[
-                col(field.name).cast(field.dataType).alias(field.name)
+                col(field.name)
+                .cast(field.dataType)
+                .alias(field.name)
                 for field in schema.fields
             ]
         )
@@ -131,5 +148,18 @@ class DataHandler:
         dataframe (DataFrame): dataframe que deve ser salvo
         path (str): caminho onde os arquivos parquet serão salvos.
         """
-        df.write.mode("overwrite").parquet(path)
-        print(f"Dados salvos com sucesso em: {path}")
+
+        try:
+            df.write.mode("overwrite").parquet(path)
+            print(f"Dados salvos com sucesso em: {path}")
+        
+        except AnalysisException as e:
+            raise WriteOutput(f"Falha de análise ao escrever relatório em '{path}'") from e
+
+        except PySparkException as e:
+            raise WriteOutput(f"Falha no Spark ao escrever relatório em '{path}'") from e
+
+        except OSError as e:
+            raise WriteOutput(f"Falha de I/O ao escrever relatório em '{path}'") from e
+
+        logger.info("Relatório escrito e salvo com sucesso em: %s", path)

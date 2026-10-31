@@ -13,36 +13,51 @@ from pipeline.pipeline import Pipeline
 
 def main():
 
-    # Carregando configurações
-    configs_pipeline = Configs()
-    print(configs_pipeline)
-    configs = configs_pipeline.configs
-
-    # Configurando Logging
-    LoggingConfig.configure(configs["logging"])
-
-    # Inicializando Logger
-    logger = logging.getLogger(__name__)
-    logger.info("▶️ Iniciando execução do pipeline.")
-
-    APP_NAME = configs.get("spark",{}).get("app_name")
-
-    spark = SparkSessionManager.get_spark_session(app_name = APP_NAME)
-
-    data_handler = DataHandler(spark = spark)
-    data_transformer = Transformation()
-    pipeline = Pipeline(data_handler = data_handler, data_transformer = data_transformer)
+    spark = None
+    exit_code = 0
 
     try:
+        # Carregando configurações
+        configs_pipeline = Configs()
+        print(configs_pipeline)
+        configs = configs_pipeline.configs
+
+        # Configurando Logging
+        LoggingConfig.configure(configs["logging"])
+        
+
+        # Inicializando Logger
+        logger = logging.getLogger(__name__)
+        logger.info("▶️ Iniciando execução do pipeline.")
+
+        APP_NAME = configs.get("spark",{}).get("app_name")
+
+        spark = SparkSessionManager.get_spark_session(app_name = APP_NAME)
+
+        data_handler = DataHandler(spark = spark)
+        data_transformer = Transformation()
+        pipeline = Pipeline(data_handler = data_handler, data_transformer = data_transformer)
+
         pipeline.run(configs = configs)
+
+        logger.info("✅ Pipeline executado com sucesso.")
     
     except Exception:
         logger.exception("Falha durante a execução do pipeline.")
-        sys.exit(1)
+        exit_code = 1
 
     finally:
-        spark.stop()
-        logger.info("✅ Pipeline executado com sucesso.")
+        if spark is not None:
+            try:
+                spark.stop()
+                logger.info("⭐ Sessão Spark encerrada.")
+
+            except Exception:
+                logger.exception("❌ Falha ao encerrar a sessão Spark.")
+                exit_code = 1
+
+    return exit_code
+
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())
