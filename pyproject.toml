@@ -1,5 +1,5 @@
 [project]
-name = "false-positive-fraud-report"
+name = "refused-payments-report"
 version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
@@ -13,7 +13,7 @@ dependencies = [
 ]
 
 [project.scripts]
-false-positive-fraud-report = "false_positive_fraud_report:main"
+refused-payments-report = "refused-payments-report:main"
 
 [build-system]
 requires = ["uv_build>=0.13.4,<0.14.0"]

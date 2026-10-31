@@ -1,10 +1,10 @@
 spark:
-  app_name: "false-positive-fraud-report"
+  app_name: "refused-payments-report"
 
 paths:
   pagamentos: "./data/input/dataset-json-pagamentos/data/pagamentos/"
   pedidos: "./data/input/datasets-csv-pedidos/data/pedidos/"
-  output: "./data/output/fraud_report"
+  output: "./data/output/refused_payments_report"
 
 file_options:
   pagamentos_json:

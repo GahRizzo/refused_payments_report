@@ -3,9 +3,15 @@ from pyspark.sql import SparkSession
 class SparkSessionManager:
     """
     Gerencia a criação e o acesso à sessão Spark.
+
+    :Parâmetros:
+    app_name (str): nome da aplicação desejado
+
+    :Retorno:
+    SparkSession configurada com o nome da sessão.
     """
     @staticmethod
-    def get_spark_session(app_name: str = "fraud-report-app-project") -> SparkSession:
+    def get_spark_session(app_name: str = "refused-payments-report") -> SparkSession:
         """
         Cria e retorna uma sessão Spark.
 
