@@ -1,5 +1,6 @@
 # Python Libs
 import logging
+import sys
 
 # Pipeline App
 from session.spark_session import SparkSessionManager
@@ -31,10 +32,17 @@ def main():
     data_handler = DataHandler(spark = spark)
     data_transformer = Transformation()
     pipeline = Pipeline(data_handler = data_handler, data_transformer = data_transformer)
-    pipeline.run(configs = configs)
 
-    spark.stop()
-    logger.info("✅ Pipeline executado com sucesso.")
+    try:
+        pipeline.run(configs = configs)
+    
+    except Exception:
+        logger.exception("Falha durante a execução do pipeline.")
+        sys.exit(1)
+
+    finally:
+        spark.stop()
+        logger.info("✅ Pipeline executado com sucesso.")
 
 if __name__ == "__main__":
     main()

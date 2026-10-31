@@ -1,6 +1,11 @@
+# PySpark Package
 from pyspark.sql import SparkSession, DataFrame
 from pyspark.sql.functions import col
 from pyspark.sql.types import (StructType, StructField, StringType, LongType, ArrayType, DateType, DoubleType, FloatType, TimestampType, BooleanType)
+from pyspark.errors import AnalysisException, PySparkException
+
+# Lib Dependencies
+from io_utils.exceptions import LoadSources
 
 class DataHandler:
     """
@@ -66,8 +71,15 @@ class DataHandler:
         path (str): caminho onde os arquivos que serão lidos estão.
         compression (str): tipo de compressão adotado para os arquivos.
         """
-        schema = self._get_schema_pagamentos()
-        return self.spark.read.option("compression", compression).json(path, schema=schema)
+        try:
+            schema = self._get_schema_pagamentos()
+            return self.spark.read.option("compression", compression).json(path, schema=schema)
+
+        except AnalysisException as e:
+            raise LoadSources(f"Falha de análise ao carregar pagamentos em '{path}'") from e
+
+        except PySparkException as e:
+            raise LoadSources(f"Falha no Spark ao carregar pagamentos em '{path}'") from e
 
     def load_pedidos(self, path: str, compression: str, header:bool, sep:str) -> DataFrame:
         """
@@ -82,8 +94,15 @@ class DataHandler:
         :Retorno:
         Dataframe contendo os dados carregados
         """
-        schema = self._get_schema_pedidos()
-        return self.spark.read.option("compression", compression).csv(path, header=header, schema=schema, sep=sep)
+        try:
+            schema = self._get_schema_pedidos()
+            return self.spark.read.option("compression", compression).csv(path, header=header, schema=schema, sep=sep)
+
+        except AnalysisException as e:
+            raise LoadSources(f"Falha de análise ao carregar pedidos em '{path}'") from e
+
+        except PySparkException as e:
+            raise LoadSources(f"Falha no Spark ao carregar pedidos em '{path}'") from e
 
     def apply_output_schema(self, df: DataFrame) -> DataFrame:
         """
