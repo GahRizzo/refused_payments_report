@@ -11,7 +11,16 @@ from processing.transformations import Transformation
 from pipeline.pipeline import Pipeline
 
 
-def main():
+def main() -> int:
+    
+    # Configuração básica para erros antes da leitura do YAML
+    logging.basicConfig(
+        level=logging.INFO,
+        format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+    )
+
+    # Logger disponível antes do try
+    logger = logging.getLogger(__name__)
 
     spark = None
     exit_code = 0
