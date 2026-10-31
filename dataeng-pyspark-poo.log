@@ -1,0 +1,5 @@
+2026-10-31 19:18:29 - config.logging_config - INFO - Logging configurado com sucesso via YAML.
+2026-10-31 19:19:47 - config.logging_config - INFO - Logging configurado com sucesso via YAML.
+2026-10-31 19:19:47 - __main__ - INFO - ▶️ Iniciando execução do pipeline.
+2026-10-31 19:20:04 - __main__ - INFO - ✅ Pipeline executado com sucesso.
+2026-10-31 19:20:04 - py4j.clientserver - INFO - Closing down clientserver connection
