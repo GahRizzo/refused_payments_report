@@ -1,14 +1,14 @@
-# Python Libs
+# Python Dependences
 import logging
 import sys
 
-# Pipeline App
-from session.spark_session import SparkSessionManager
-from config.settings import Configs
-from config.logging import LoggingConfig
-from io_utils.data_handler import DataHandler
-from processing.transformations import Transformation
-from pipeline.pipeline import Pipeline
+# Self Dependencies
+from refused_payments_report.session.spark_session import SparkSessionManager
+from refused_payments_report.config.settings import Configs
+from refused_payments_report.config.logging import LoggingConfig
+from refused_payments_report.io_utils.data_handler import DataHandler
+from refused_payments_report.processing.transformations import Transformation
+from refused_payments_report.pipeline.pipeline import Pipeline
 
 
 def main() -> int:
