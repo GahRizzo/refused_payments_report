@@ -75,8 +75,8 @@ class Configs:
         json_options = file_options["pagamentos_json"]
         if not isinstance(json_options.get("compression"), str):
             raise ConfigError("file_options.pagamentos_json.compression' deve ser uma string.")
-        if not json_options.get("compression") == "gzip":
-            raise ConfigError("'file_options.pagamentos_json.compression' aceita apenas o modelo de compressão 'gzip'.")
+        if not json_options.get("compression") == "gzip" or json_options.get("compression") is None:
+            raise ConfigError("'file_options.pagamentos_json.compression' aceita apenas o modelo de compressão 'gzip' ou None.")
         
         ## Verificando configurações de pedidos_csv
         csv_options = file_options["pedidos_csv"]
@@ -86,8 +86,8 @@ class Configs:
         compression = csv_options.get("compression")
         if not isinstance(compression, str):
             raise ConfigError("file_options.pedidos_csv.compression' deve ser uma string.")
-        if not compression == "gzip":
-            raise ConfigError("'file_options.pedidos_csv.compression' aceita apenas o modelo de compressão 'gzip'.")
+        if not compression == "gzip" or compression is None:
+            raise ConfigError("'file_options.pedidos_csv.compression' aceita apenas o modelo de compressão 'gzip' ou None.")
 
         separator = csv_options.get("sep")
         if not isinstance(separator, str) or not separator:
