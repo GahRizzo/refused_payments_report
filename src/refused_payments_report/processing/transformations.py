@@ -212,8 +212,9 @@ class Transformation:
                     col("p.id_pedido"),
                     col("o.uf"),
                     col("p.forma_pagamento"),
-                    col("o.valor_total"),
                     col("o.data_criacao"),
+                    col("o.valor_total"),
+                    
                 )
             )
 
@@ -246,7 +247,7 @@ class Transformation:
             self._require_columns(df, ["uf", "forma_pagamento", "valor_total"])
 
             transformed_df = df.orderBy(
-                asc(col("uf")), asc(col("forma_pagamento")), desc(col("valor_total"))
+                asc(col("uf")), asc(col("forma_pagamento")), asc(col("data_criacao"))
             )
 
             logger.info(
