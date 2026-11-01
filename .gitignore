@@ -1,4 +1,16 @@
-# Python cache
+# Pytest
+.pytest_cache/
+
+# Coverage
+.coverage
+.coverage.*
+htmlcov/
+coverage.xml
+
+# Python
 __pycache__/
 *.py[cod]
 *.log
+
+# Temporary test artifacts
+tests/tmp/
