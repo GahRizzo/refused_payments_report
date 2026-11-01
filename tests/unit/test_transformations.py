@@ -210,23 +210,25 @@ def test_priorization_orders_by_business_criteria(spark):
     """
     df = spark.createDataFrame(
         [
-            ("SP", "PIX", 100.0),
-            ("RJ", "PIX", 200.0),
-            ("SP", "PIX", 300.0),
-            ("SP", "CARTAO", 150.0),
+            ("SP", "PIX", datetime(2025, 1, 12, 17, 10, 0),100.0),
+            ("SP", "PIX", datetime(2025, 1, 12, 13, 4, 0),100.0),
+            ("RJ", "PIX", datetime(2025, 2, 10, 13, 4, 0),200.0),
+            ("SP", "PIX", datetime(2025, 3, 25, 13, 4, 0),300.0),
+            ("SP", "CARTAO", datetime(2025, 2, 5, 13, 4, 0),150.0)
         ],
-        "uf STRING, forma_pagamento STRING, valor_total DOUBLE",
+        "uf STRING, forma_pagamento STRING, data_criacao TIMESTAMP, valor_total DOUBLE",
     )
 
     result = Transformation().priorization(df)
 
     actual = [
-        (row.uf, row.forma_pagamento, row.valor_total) for row in result.collect()
+        (row.uf, row.forma_pagamento, row.data_criacao, row.valor_total) for row in result.collect()
     ]
 
     assert actual == [
-        ("RJ", "PIX", 200.0),
-        ("SP", "CARTAO", 150.0),
-        ("SP", "PIX", 300.0),
-        ("SP", "PIX", 100.0),
+        ("RJ", "PIX", datetime(2025, 2, 10, 13, 4, 0),200.0),
+        ("SP", "CARTAO", datetime(2025, 2, 5, 13, 4, 0),150.0),
+        ("SP", "PIX", datetime(2025, 1, 12, 13, 4, 0),100.0),
+        ("SP", "PIX", datetime(2025, 1, 12, 17, 10, 0),100.0),
+        ("SP", "PIX", datetime(2025, 3, 25, 13, 4, 0),300.0)
     ]
