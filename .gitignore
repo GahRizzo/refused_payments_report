@@ -16,4 +16,4 @@ __pycache__/
 tests/tmp/
 
 # Arquivos gerados pelo pipeline
-/output/
+/data/output/
