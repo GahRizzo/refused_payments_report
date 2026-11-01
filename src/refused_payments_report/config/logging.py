@@ -28,7 +28,9 @@ class LoggingConfig:
                 config = yaml.safe_load(file)
 
             if not isinstance(config, dict):
-                raise ValueError("O arquivo de logging deve conter um dicionário.") # noqa: TRY004
+                raise ValueError(
+                    "O arquivo de logging deve conter um dicionário."
+                )  # noqa: TRY004
 
             logging.config.dictConfig(config)
 

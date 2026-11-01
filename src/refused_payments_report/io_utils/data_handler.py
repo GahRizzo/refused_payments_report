@@ -87,7 +87,7 @@ class DataHandler:
                 StructField("uf", StringType(), True),
                 StructField("forma_pagamento", StringType(), True),
                 StructField("data_criacao", TimestampType(), True),
-                StructField("valor_total", DoubleType(), True)              
+                StructField("valor_total", DoubleType(), True),
             ]
         )
 

@@ -113,7 +113,7 @@ def test_pipeline_generates_correct_report(spark, tmp_path):
         "uf",
         "forma_pagamento",
         "data_criacao",
-        "valor_total"
+        "valor_total",
     ]
 
 

@@ -5,7 +5,7 @@ from pyspark.errors import AnalysisException, PySparkException
 
 # Spark Dependencies
 from pyspark.sql import DataFrame
-from pyspark.sql.functions import asc, col, count, desc, isnan, year
+from pyspark.sql.functions import asc, col, count, isnan, year
 from pyspark.sql.types import StructType
 
 # Self Dependencies
@@ -138,10 +138,8 @@ class Transformation:
                     "Campo obrigatório ausente: 'avaliacao_fraude.fraude'"
                 )
 
-            transformed_df = (
-                df
-                .filter(~col("status"))
-                .filter(~col("avaliacao_fraude.fraude"))
+            transformed_df = df.filter(~col("status")).filter(
+                ~col("avaliacao_fraude.fraude")
             )
 
             logger.info(
@@ -214,7 +212,6 @@ class Transformation:
                     col("p.forma_pagamento"),
                     col("o.data_criacao"),
                     col("o.valor_total"),
-                    
                 )
             )
 
@@ -234,24 +231,24 @@ class Transformation:
 
     def priorization(self, df: DataFrame) -> DataFrame:
         """
-        Aplicação de um ranqueamento ao dataframe levando em consideração a Unidade Federativa, Forma de Pagamentos e o Valor Total
+        Aplicação de um ranqueamento ao dataframe levando em consideração a Unidade Federativa, Forma de Pagamentos e a Data de Criação
 
         :Parâmetros:
         df (Dataframe): Dataframe para priorização
 
         :Retorno:
-        Dataframe ordenado segundo as colunas uf, formna_pagamento e valor_total
+        Dataframe ordenado segundo as colunas uf, formna_pagamento e data_criacao
         """
 
         try:
-            self._require_columns(df, ["uf", "forma_pagamento", "valor_total"])
+            self._require_columns(df, ["uf", "forma_pagamento", "data_criacao"])
 
             transformed_df = df.orderBy(
                 asc(col("uf")), asc(col("forma_pagamento")), asc(col("data_criacao"))
             )
 
             logger.info(
-                "✅ Ordenação dos pagamentos por UF, Forma de Pagamento e Valor total realizada com sucesso."
+                "✅ Ordenação dos pagamentos por UF, Forma de Pagamento e Data de Criação realizada com sucesso."
             )
 
             return transformed_df

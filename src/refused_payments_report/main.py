@@ -60,8 +60,10 @@ def main() -> int:
 
     return exit_code
 
+
 def cli() -> None:
     sys.exit(main())
+
 
 if __name__ == "__main__":
     cli()

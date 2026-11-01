@@ -210,11 +210,11 @@ def test_priorization_orders_by_business_criteria(spark):
     """
     df = spark.createDataFrame(
         [
-            ("SP", "PIX", datetime(2025, 1, 12, 17, 10, 0),100.0),
-            ("SP", "PIX", datetime(2025, 1, 12, 13, 4, 0),100.0),
-            ("RJ", "PIX", datetime(2025, 2, 10, 13, 4, 0),200.0),
-            ("SP", "PIX", datetime(2025, 3, 25, 13, 4, 0),300.0),
-            ("SP", "CARTAO", datetime(2025, 2, 5, 13, 4, 0),150.0)
+            ("SP", "PIX", datetime(2025, 1, 12, 17, 10, 0), 100.0),
+            ("SP", "PIX", datetime(2025, 1, 12, 13, 4, 0), 100.0),
+            ("RJ", "PIX", datetime(2025, 2, 10, 13, 4, 0), 200.0),
+            ("SP", "PIX", datetime(2025, 3, 25, 13, 4, 0), 300.0),
+            ("SP", "CARTAO", datetime(2025, 2, 5, 13, 4, 0), 150.0),
         ],
         "uf STRING, forma_pagamento STRING, data_criacao TIMESTAMP, valor_total DOUBLE",
     )
@@ -222,13 +222,30 @@ def test_priorization_orders_by_business_criteria(spark):
     result = Transformation().priorization(df)
 
     actual = [
-        (row.uf, row.forma_pagamento, row.data_criacao, row.valor_total) for row in result.collect()
+        (row.uf, row.forma_pagamento, row.data_criacao, row.valor_total)
+        for row in result.collect()
     ]
 
     assert actual == [
-        ("RJ", "PIX", datetime(2025, 2, 10, 13, 4, 0),200.0),
-        ("SP", "CARTAO", datetime(2025, 2, 5, 13, 4, 0),150.0),
-        ("SP", "PIX", datetime(2025, 1, 12, 13, 4, 0),100.0),
-        ("SP", "PIX", datetime(2025, 1, 12, 17, 10, 0),100.0),
-        ("SP", "PIX", datetime(2025, 3, 25, 13, 4, 0),300.0)
+        ("RJ", "PIX", datetime(2025, 2, 10, 13, 4, 0), 200.0),
+        ("SP", "CARTAO", datetime(2025, 2, 5, 13, 4, 0), 150.0),
+        ("SP", "PIX", datetime(2025, 1, 12, 13, 4, 0), 100.0),
+        ("SP", "PIX", datetime(2025, 1, 12, 17, 10, 0), 100.0),
+        ("SP", "PIX", datetime(2025, 3, 25, 13, 4, 0), 300.0),
     ]
+
+
+def test_priorization_rejects_missing_creation_date(spark):
+    """
+    Verifica se a ausência da coluna utilizada na ordenação gera uma exceção de negócio.
+    """
+
+    df = spark.createDataFrame(
+        [
+            ("SP", "PIX", 100.0),
+        ],
+        "uf STRING, forma_pagamento STRING, valor_total DOUBLE",
+    )
+
+    with pytest.raises(BusinessRuleError, match="data_criacao"):
+        Transformation().priorization(df)

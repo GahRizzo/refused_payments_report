@@ -111,7 +111,7 @@ def test_apply_output_schema_casts_and_orders_columns(spark):
         "uf",
         "forma_pagamento",
         "data_criacao",
-        "valor_total"
+        "valor_total",
     ]
 
     assert isinstance(result.schema["id_pedido"].dataType, StringType)
