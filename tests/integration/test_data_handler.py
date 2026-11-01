@@ -1,9 +1,9 @@
 # Pytest Dependencie
-import pytest
-
 # Python Dependencies
 import json
 from datetime import datetime
+
+import pytest
 
 # Pyspark Dependencies
 from pyspark.sql.types import (
@@ -28,17 +28,16 @@ def test_load_pedidos_reads_csv_correctly(spark, tmp_path):
         "data_criacao;uf;id_cliente\n"
         "P001;Notebook;2500.50;2;2025-01-10 10:00:00;SP;10\n"
         "P002;Mouse;50.00;3;2025-01-11 11:00:00;RJ;20\n",
-        encoding="utf-8"
+        encoding="utf-8",
     )
 
     handler = DataHandler(spark)
 
-    result = handler.load_pedidos(path=str(source), compression=None, header=True, sep=";")
+    result = handler.load_pedidos(
+        path=str(source), compression=None, header=True, sep=";"
+    )
 
-    rows = {
-        row.id_pedido: row
-        for row in result.collect()
-    }
+    rows = {row.id_pedido: row for row in result.collect()}
 
     assert len(rows) == 2
     assert rows["P001"].produto == "Notebook"
@@ -47,6 +46,7 @@ def test_load_pedidos_reads_csv_correctly(spark, tmp_path):
     assert rows["P001"].uf == "SP"
     assert rows["P002"].id_cliente == 20
     assert isinstance(result.schema["data_criacao"].dataType, TimestampType)
+
 
 def test_load_pagamentos_reads_nested_json(spark, tmp_path):
     """
@@ -62,10 +62,7 @@ def test_load_pagamentos_reads_nested_json(spark, tmp_path):
             "valor_pagamento": 100.0,
             "status": False,
             "data_processamento": "2025-01-10T10:00:00",
-            "avaliacao_fraude": {
-                "fraude": False,
-                "score": 0.15
-            }
+            "avaliacao_fraude": {"fraude": False, "score": 0.15},
         },
         {
             "id_pedido": "P002",
@@ -73,23 +70,19 @@ def test_load_pagamentos_reads_nested_json(spark, tmp_path):
             "valor_pagamento": 200.0,
             "status": True,
             "data_processamento": "2025-01-11T11:00:00",
-            "avaliacao_fraude": {
-                "fraude": True,
-                "score": 0.95
-            }
-        }
+            "avaliacao_fraude": {"fraude": True, "score": 0.95},
+        },
     ]
 
-    source.write_text("\n".join(json.dumps(record) for record in records), encoding="utf-8")
+    source.write_text(
+        "\n".join(json.dumps(record) for record in records), encoding="utf-8"
+    )
 
     handler = DataHandler(spark)
 
     result = handler.load_pagamentos(path=str(source), compression=None)
 
-    rows = {
-        row.id_pedido: row
-        for row in result.collect()
-    }
+    rows = {row.id_pedido: row for row in result.collect()}
 
     assert len(rows) == 2
     assert rows["P001"].forma_pagamento == "PIX"
@@ -106,22 +99,8 @@ def test_apply_output_schema_casts_and_orders_columns(spark):
     """
 
     df = spark.createDataFrame(
-        [
-            (
-                "2025-01-10 10:00:00",
-                "100.50",
-                "PIX",
-                "SP",
-                "P001"
-            )
-        ],
-        [
-            "data_criacao",
-            "valor_total",
-            "forma_pagamento",
-            "uf",
-            "id_pedido"
-        ]
+        [("2025-01-10 10:00:00", "100.50", "PIX", "SP", "P001")],
+        ["data_criacao", "valor_total", "forma_pagamento", "uf", "id_pedido"],
     )
 
     handler = DataHandler(spark)
@@ -132,7 +111,7 @@ def test_apply_output_schema_casts_and_orders_columns(spark):
         "uf",
         "forma_pagamento",
         "valor_total",
-        "data_criacao"
+        "data_criacao",
     ]
 
     assert isinstance(result.schema["id_pedido"].dataType, StringType)
@@ -152,16 +131,13 @@ def test_write_parquet_preserves_data(spark, tmp_path):
     """
 
     df = spark.createDataFrame(
-        [
-            ("P001", "SP", "PIX", 100.0),
-            ("P002", "RJ", "CARTAO", 250.0)
-        ],
+        [("P001", "SP", "PIX", 100.0), ("P002", "RJ", "CARTAO", 250.0)],
         """
         id_pedido STRING,
         uf STRING,
         forma_pagamento STRING,
         valor_total DOUBLE
-        """
+        """,
     )
 
     handler = DataHandler(spark)
@@ -176,27 +152,22 @@ def test_write_parquet_preserves_data(spark, tmp_path):
         for row in recovered.collect()
     }
 
-    assert actual == {
-        "P001": ("SP", "PIX", 100.0),
-        "P002": ("RJ", "CARTAO", 250.0)
-    }
+    assert actual == {"P001": ("SP", "PIX", 100.0), "P002": ("RJ", "CARTAO", 250.0)}
     assert recovered.count() == 2
+
 
 def test_load_pedidos_raises_load_sources_for_missing_file(spark, tmp_path):
     """
     Valida se path inexistente envia o erro esperado.
     """
-    
+
     handler = DataHandler(spark)
 
     missing_path = tmp_path / "pedidos_inexistentes.csv"
 
     with pytest.raises(LoadSources) as error:
         handler.load_pedidos(
-            path=str(missing_path),
-            compression=None,
-            header=True,
-            sep=";"
+            path=str(missing_path), compression=None, header=True, sep=";"
         )
 
     assert "pedidos" in str(error.value).lower()

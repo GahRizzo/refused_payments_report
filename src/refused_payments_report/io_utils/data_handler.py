@@ -1,16 +1,26 @@
 # PySpark Package
-from pyspark.sql import SparkSession, DataFrame
-from pyspark.sql.functions import col
-from pyspark.sql.types import (StructType, StructField, StringType, LongType, ArrayType, DateType, DoubleType, FloatType, TimestampType, BooleanType)
+# Python Dependencies
+import logging
+
 from pyspark.errors import AnalysisException, PySparkException
+from pyspark.sql import DataFrame, SparkSession
+from pyspark.sql.functions import col
+from pyspark.sql.types import (
+    BooleanType,
+    DoubleType,
+    FloatType,
+    LongType,
+    StringType,
+    StructField,
+    StructType,
+    TimestampType,
+)
 
 # Self Dependencies
 from .exceptions import LoadSources, WriteOutput
 
-# Python Dependencies
-import logging
-
 logger = logging.getLogger(__name__)
+
 
 class DataHandler:
     """
@@ -31,42 +41,55 @@ class DataHandler:
         """
         Define e retorna o schema para o dataframe de clientes.
         """
-        return StructType([
-            StructField("id_pedido", StringType(), True),
-            StructField("forma_pagamento", StringType(), True),
-            StructField("valor_pagamento", DoubleType(), True),
-            StructField("status", BooleanType(), True),
-            StructField("data_processamento", TimestampType(), True),
-            StructField("avaliacao_fraude", StructType([
-                StructField("fraude", BooleanType(), True),
-                StructField("score", DoubleType(), True)]), True)
-        ])
+        return StructType(
+            [
+                StructField("id_pedido", StringType(), True),
+                StructField("forma_pagamento", StringType(), True),
+                StructField("valor_pagamento", DoubleType(), True),
+                StructField("status", BooleanType(), True),
+                StructField("data_processamento", TimestampType(), True),
+                StructField(
+                    "avaliacao_fraude",
+                    StructType(
+                        [
+                            StructField("fraude", BooleanType(), True),
+                            StructField("score", DoubleType(), True),
+                        ]
+                    ),
+                    True,
+                ),
+            ]
+        )
 
     def _get_schema_pedidos(self) -> StructType:
         """
         Define e retorna o schema para o dataframe de pedidos.
         """
-        return StructType([
-            StructField("id_pedido", StringType(), True),
-            StructField("produto", StringType(), True),
-            StructField("valor_unitario", FloatType(), True),
-            StructField("quantidade", LongType(), True),
-            StructField("data_criacao", TimestampType(), True),
-            StructField("uf", StringType(), True),
-            StructField("id_cliente", LongType(), True)
-        ])
-    
+        return StructType(
+            [
+                StructField("id_pedido", StringType(), True),
+                StructField("produto", StringType(), True),
+                StructField("valor_unitario", FloatType(), True),
+                StructField("quantidade", LongType(), True),
+                StructField("data_criacao", TimestampType(), True),
+                StructField("uf", StringType(), True),
+                StructField("id_cliente", LongType(), True),
+            ]
+        )
+
     def _get_schema_output(self) -> StructType:
         """
         Define o schema esperado para o relatório final de pagamentos recusados.
         """
-        return StructType([
-            StructField("id_pedido", StringType(), False),
-            StructField("uf", StringType(), True),
-            StructField("forma_pagamento", StringType(), True),
-            StructField("valor_total", DoubleType(), True),
-            StructField("data_criacao", TimestampType(), True)
-        ])
+        return StructType(
+            [
+                StructField("id_pedido", StringType(), False),
+                StructField("uf", StringType(), True),
+                StructField("forma_pagamento", StringType(), True),
+                StructField("valor_total", DoubleType(), True),
+                StructField("data_criacao", TimestampType(), True),
+            ]
+        )
 
     def load_pagamentos(self, path: str, compression: str | None = None) -> DataFrame:
         """
@@ -80,23 +103,29 @@ class DataHandler:
             schema = self._get_schema_pagamentos()
 
             reader = self.spark.read
-            
+
             if compression is not None:
                 reader = reader.option("compression", compression)
 
             df = reader.json(path, schema=schema)
 
             logger.info("✅ DataFrame de pagamentos carregado com sucesso.")
-            
+
             return df
 
         except AnalysisException as e:
-            raise LoadSources(f"Falha de análise ao carregar pagamentos em '{path}'") from e
+            raise LoadSources(
+                f"Falha de análise ao carregar pagamentos em '{path}'"
+            ) from e
 
         except PySparkException as e:
-            raise LoadSources(f"Falha no Spark ao carregar pagamentos em '{path}'") from e
+            raise LoadSources(
+                f"Falha no Spark ao carregar pagamentos em '{path}'"
+            ) from e
 
-    def load_pedidos(self, path: str, header:bool, sep:str, compression: str | None = None) -> DataFrame:
+    def load_pedidos(
+        self, path: str, header: bool, sep: str, compression: str | None = None
+    ) -> DataFrame:
         """
         Carrega o dataframe de pedidos a partir de um arquivo CSV.
 
@@ -116,15 +145,17 @@ class DataHandler:
 
             if compression is not None:
                 reader = reader.option("compression", compression)
-            
-            df = reader.csv(path,schema=schema)
-            
+
+            df = reader.csv(path, schema=schema)
+
             logger.info("✅ DataFrame de pedidos carregado com sucesso.")
-            
+
             return df
 
         except AnalysisException as e:
-            raise LoadSources(f"Falha de análise ao carregar pedidos em '{path}'") from e
+            raise LoadSources(
+                f"Falha de análise ao carregar pedidos em '{path}'"
+            ) from e
 
         except PySparkException as e:
             raise LoadSources(f"Falha no Spark ao carregar pedidos em '{path}'") from e
@@ -145,17 +176,18 @@ class DataHandler:
         missing_columns = [name for name in expected_columns if name not in df.columns]
 
         if missing_columns:
-            raise ValueError("Colunas obrigatórias ausentes no relatório: "f"{', '.join(missing_columns)}")
+            raise ValueError(
+                "Colunas obrigatórias ausentes no relatório: "
+                f"{', '.join(missing_columns)}"
+            )
 
         return df.select(
             *[
-                col(field.name)
-                .cast(field.dataType)
-                .alias(field.name)
+                col(field.name).cast(field.dataType).alias(field.name)
                 for field in schema.fields
             ]
         )
-    
+
     def write_parquet(self, df: DataFrame, path: str):
         """
         Escreve o relatório de output no formato de parquet para um path específico.
@@ -168,12 +200,16 @@ class DataHandler:
         try:
             df.write.mode("overwrite").parquet(path)
             logger.info("✅ Relatório escrito e salvo com sucesso em: %s", path)
-        
+
         except AnalysisException as e:
-            raise WriteOutput(f"Falha de análise ao escrever relatório em '{path}'") from e
+            raise WriteOutput(
+                f"Falha de análise ao escrever relatório em '{path}'"
+            ) from e
 
         except PySparkException as e:
-            raise WriteOutput(f"Falha no Spark ao escrever relatório em '{path}'") from e
+            raise WriteOutput(
+                f"Falha no Spark ao escrever relatório em '{path}'"
+            ) from e
 
         except OSError as e:
             raise WriteOutput(f"Falha de I/O ao escrever relatório em '{path}'") from e

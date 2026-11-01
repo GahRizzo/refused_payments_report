@@ -17,13 +17,11 @@ def test_spark_session_manager_builds_session(monkeypatch):
     builder.master.return_value = builder
     builder.getOrCreate.return_value = session
 
-    monkeypatch.setattr(
-        spark_session.SparkSession,
-        "builder",
-        builder
-    )
+    monkeypatch.setattr(spark_session.SparkSession, "builder", builder)
 
-    result = spark_session.SparkSessionManager.get_spark_session(app_name="refused-payments-tests")
+    result = spark_session.SparkSessionManager.get_spark_session(
+        app_name="refused-payments-tests"
+    )
 
     builder.appName.assert_called_once_with("refused-payments-tests")
     builder.master.assert_called_once_with("local[*]")

@@ -1,4 +1,3 @@
-
 # Python Dependencies
 import gzip
 import json
@@ -8,9 +7,9 @@ import pytest
 
 # Self Dependencies
 from refused_payments_report.io_utils.data_handler import DataHandler
-from refused_payments_report.processing.transformations import Transformation
-from refused_payments_report.processing.exceptions import BusinessRuleError
 from refused_payments_report.pipeline.pipeline import Pipeline
+from refused_payments_report.processing.exceptions import BusinessRuleError
+from refused_payments_report.processing.transformations import Transformation
 
 
 def create_test_sources(tmp_path, invalid_quantity=False):
@@ -22,25 +21,16 @@ def create_test_sources(tmp_path, invalid_quantity=False):
     output_path = tmp_path / "output"
 
     orders = [
-        ("P001", "Produto A", 60.0, 2,
-         "2025-01-10 10:00:00", "SP", 1),
-        ("P002", "Produto B", 40.0, 1,
-         "2025-02-10 10:00:00", "SP", 2),
-        ("P003", "Produto C", 30.0, 3,
-         "2025-03-10 10:00:00", "RJ", 3),
-        ("P004", "Produto D", 50.0, 2,
-         "2024-04-10 10:00:00", "MG", 4),
-        ("P005", "Produto E", 50.0, 1,
-         "2025-05-10 10:00:00", "SP", 5),
-        ("P006", "Produto F", 60.0, 1,
-         "2025-06-10 10:00:00", "SP", 6)
+        ("P001", "Produto A", 60.0, 2, "2025-01-10 10:00:00", "SP", 1),
+        ("P002", "Produto B", 40.0, 1, "2025-02-10 10:00:00", "SP", 2),
+        ("P003", "Produto C", 30.0, 3, "2025-03-10 10:00:00", "RJ", 3),
+        ("P004", "Produto D", 50.0, 2, "2024-04-10 10:00:00", "MG", 4),
+        ("P005", "Produto E", 50.0, 1, "2025-05-10 10:00:00", "SP", 5),
+        ("P006", "Produto F", 60.0, 1, "2025-06-10 10:00:00", "SP", 6),
     ]
 
     if invalid_quantity:
-        orders[0] = (
-            "P001", "Produto A", 60.0, -2,
-            "2025-01-10 10:00:00", "SP", 1
-        )
+        orders[0] = ("P001", "Produto A", 60.0, -2, "2025-01-10 10:00:00", "SP", 1)
 
     with gzip.open(orders_path, "wt", encoding="utf-8") as file:
         file.write(
@@ -57,7 +47,7 @@ def create_test_sources(tmp_path, invalid_quantity=False):
         ("P003", "CARTAO", False, False),
         ("P004", "PIX", False, False),
         ("P005", "PIX", True, False),
-        ("P006", "PIX", False, True)
+        ("P006", "PIX", False, True),
     ]
 
     with gzip.open(payments_path, "wt", encoding="utf-8") as file:
@@ -68,10 +58,7 @@ def create_test_sources(tmp_path, invalid_quantity=False):
                 "valor_pagamento": 100.0,
                 "status": status,
                 "data_processamento": "2025-07-01T12:00:00",
-                "avaliacao_fraude": {
-                    "fraude": fraud,
-                    "score": 0.1
-                }
+                "avaliacao_fraude": {"fraude": fraud, "score": 0.1},
             }
 
             file.write(json.dumps(record) + "\n")
@@ -80,21 +67,13 @@ def create_test_sources(tmp_path, invalid_quantity=False):
         "paths": {
             "pedidos": str(orders_path),
             "pagamentos": str(payments_path),
-            "output": str(output_path)
+            "output": str(output_path),
         },
         "file_options": {
-            "pedidos_csv": {
-                "compression": "gzip",
-                "header": True,
-                "sep": ";"
-            },
-            "pagamentos_json": {
-                "compression": "gzip"
-            }
+            "pedidos_csv": {"compression": "gzip", "header": True, "sep": ";"},
+            "pagamentos_json": {"compression": "gzip"},
         },
-        "transformer": {
-            "target_year": 2025
-        }
+        "transformer": {"target_year": 2025},
     }
 
     return configs, output_path
@@ -117,19 +96,14 @@ def test_pipeline_generates_correct_report(spark, tmp_path):
     result = spark.read.parquet(str(output_path))
 
     actual = {
-        (
-            row.id_pedido,
-            row.uf,
-            row.forma_pagamento,
-            row.valor_total
-        )
+        (row.id_pedido, row.uf, row.forma_pagamento, row.valor_total)
         for row in result.collect()
     }
 
     assert actual == {
         ("P001", "SP", "PIX", 120.0),
         ("P002", "SP", "PIX", 40.0),
-        ("P003", "RJ", "CARTAO", 90.0)
+        ("P003", "RJ", "CARTAO", 90.0),
     }
 
     assert result.count() == 3
@@ -139,7 +113,7 @@ def test_pipeline_generates_correct_report(spark, tmp_path):
         "uf",
         "forma_pagamento",
         "valor_total",
-        "data_criacao"
+        "data_criacao",
     ]
 
 
@@ -151,7 +125,9 @@ def test_pipeline_rejects_invalid_orders_without_writing(spark, tmp_path):
 
     pipeline = create_pipeline(spark)
 
-    with pytest.raises(BusinessRuleError, match="quantidade ou valor unitário inválidos"):
+    with pytest.raises(
+        BusinessRuleError, match="quantidade ou valor unitário inválidos"
+    ):
         pipeline.run(configs)
 
     assert not output_path.exists()

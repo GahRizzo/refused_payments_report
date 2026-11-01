@@ -21,8 +21,10 @@ build-backend = "uv_build"
 
 [dependency-groups]
 dev = [
+    "black>=26.10.1",
     "pytest>=9.2.0",
     "pytest-cov>=7.1.0",
+    "ruff>=0.17.3",
 ]
 
 [tool.pytest.ini_options]
@@ -37,3 +39,21 @@ branch = true
 show_missing = true
 skip_covered = true
 fail_under = 80
+
+[tool.black]
+line-length = 88
+target-version = ["py314"]
+
+[tool.ruff]
+line-length = 88
+target-version = "py314"
+
+[tool.ruff.lint]
+select = [
+    "E4",  # Erros de estilo relevantes
+    "E7",  # Problemas em instruções e comparações
+    "E9",  # Erros de sintaxe
+    "F",   # Pyflakes: variáveis e imports
+    "I",   # Organização dos imports
+    "B",   # Possíveis bugs
+]

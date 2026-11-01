@@ -1,33 +1,31 @@
 # Pytest Dependencie
-import pytest
-
 # Python Dependencies
 from datetime import datetime
 
+import pytest
+
+from refused_payments_report.processing.exceptions import BusinessRuleError
+
 # Self Dependencies
 from refused_payments_report.processing.transformations import Transformation
-from refused_payments_report.processing.exceptions import BusinessRuleError
 
 
 def test_add_total_value_calculates_correct_amount(spark):
     """
     Teste para validar o cálculo do valor total, multiplicando pedidos por quantidade.
     """
-    
+
     df = spark.createDataFrame(
         [
             (1, 2, 25.0),
             (2, 3, 10.0),
         ],
-        ["id_pedido", "quantidade", "valor_unitario"]
+        ["id_pedido", "quantidade", "valor_unitario"],
     )
 
     result = Transformation().add_total_value(df)
 
-    actual = {
-        row["id_pedido"]: row["valor_total"]
-        for row in result.collect()
-    }
+    actual = {row["id_pedido"]: row["valor_total"] for row in result.collect()}
 
     assert actual == {
         1: 50.0,
@@ -43,20 +41,19 @@ def test_add_total_value_calculates_correct_amount(spark):
         (2, -10.0),
         (2, None),
         (2, float("nan")),
-    ]
+    ],
 )
-
 def test_add_total_value_rejects_invalid_values(spark, quantity, unit_price):
     """
     Teste para validar o formato esperado para os dados de quantidade e preço unitário.
     """
     df = spark.createDataFrame(
-        [(quantity, unit_price)],
-        "quantidade LONG, valor_unitario DOUBLE"
+        [(quantity, unit_price)], "quantidade LONG, valor_unitario DOUBLE"
     )
 
     with pytest.raises(BusinessRuleError):
         Transformation().add_total_value(df)
+
 
 def test_year_orders_filter_keeps_only_target_year(spark):
     """
@@ -68,12 +65,10 @@ def test_year_orders_filter_keeps_only_target_year(spark):
             ("P002", datetime(2024, 12, 31)),
             ("P003", datetime(2025, 8, 20)),
         ],
-        "id_pedido STRING, data_criacao TIMESTAMP"
+        "id_pedido STRING, data_criacao TIMESTAMP",
     )
 
-    result = Transformation().year_orders_filter(
-        df, target_year=2025
-    )
+    result = Transformation().year_orders_filter(df, target_year=2025)
 
     ids = {row.id_pedido for row in result.collect()}
 
@@ -84,10 +79,9 @@ def test_year_orders_filter_keeps_only_target_year(spark):
 def test_year_orders_filter_rejects_invalid_year(spark, invalid_year):
     """
     Teste para validar se o filtro de orders rejeita dados inválidos.
-    """    
+    """
     df = spark.createDataFrame(
-        [("P001", datetime(2025, 1, 10))],
-        "id_pedido STRING, data_criacao TIMESTAMP"
+        [("P001", datetime(2025, 1, 10))], "id_pedido STRING, data_criacao TIMESTAMP"
     )
 
     with pytest.raises(BusinessRuleError):
@@ -109,7 +103,7 @@ def test_false_negative_filter_keeps_only_expected_payments(spark):
         id_pedido STRING,
         status BOOLEAN,
         avaliacao_fraude STRUCT<fraude: BOOLEAN>
-        """
+        """,
     )
 
     result = Transformation().false_negative_payments_filter(df)
@@ -131,7 +125,7 @@ def test_join_information_preserves_correct_financial_values(spark):
         uf STRING,
         valor_total DOUBLE,
         data_criacao TIMESTAMP
-        """
+        """,
     )
 
     payments = spark.createDataFrame(
@@ -139,7 +133,7 @@ def test_join_information_preserves_correct_financial_values(spark):
             ("P001", "PIX"),
             ("P002", "CARTAO"),
         ],
-        "id_pedido STRING, forma_pagamento STRING"
+        "id_pedido STRING, forma_pagamento STRING",
     )
 
     result = Transformation().join_information(orders, payments)
@@ -171,16 +165,16 @@ def test_join_information_rejects_duplicate_orders(spark):
         uf STRING,
         valor_total DOUBLE,
         data_criacao TIMESTAMP
-        """
+        """,
     )
 
     payments = spark.createDataFrame(
-        [("P001", "PIX")],
-        "id_pedido STRING, forma_pagamento STRING"
+        [("P001", "PIX")], "id_pedido STRING, forma_pagamento STRING"
     )
 
     with pytest.raises(BusinessRuleError, match="duplicado"):
         Transformation().join_information(orders, payments)
+
 
 def test_join_information_rejects_duplicate_payments(spark):
     """
@@ -195,7 +189,7 @@ def test_join_information_rejects_duplicate_payments(spark):
         uf STRING,
         valor_total DOUBLE,
         data_criacao TIMESTAMP
-        """
+        """,
     )
 
     payments = spark.createDataFrame(
@@ -203,11 +197,12 @@ def test_join_information_rejects_duplicate_payments(spark):
             ("P001", "PIX"),
             ("P001", "CARTAO"),
         ],
-        "id_pedido STRING, forma_pagamento STRING"
+        "id_pedido STRING, forma_pagamento STRING",
     )
 
-    with pytest.raises(BusinessRuleError,match="duplicado"):
+    with pytest.raises(BusinessRuleError, match="duplicado"):
         Transformation().join_information(orders, payments)
+
 
 def test_priorization_orders_by_business_criteria(spark):
     """
@@ -220,14 +215,13 @@ def test_priorization_orders_by_business_criteria(spark):
             ("SP", "PIX", 300.0),
             ("SP", "CARTAO", 150.0),
         ],
-        "uf STRING, forma_pagamento STRING, valor_total DOUBLE"
+        "uf STRING, forma_pagamento STRING, valor_total DOUBLE",
     )
 
     result = Transformation().priorization(df)
 
     actual = [
-        (row.uf, row.forma_pagamento, row.valor_total)
-        for row in result.collect()
+        (row.uf, row.forma_pagamento, row.valor_total) for row in result.collect()
     ]
 
     assert actual == [

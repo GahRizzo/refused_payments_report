@@ -1,11 +1,12 @@
-
 # Pytest Dependencies
 from unittest.mock import Mock, call
+
 import pytest
+
+from refused_payments_report.io_utils.exceptions import LoadSources
 
 # Self Dependencies
 from refused_payments_report.pipeline.pipeline import Pipeline
-from refused_payments_report.io_utils.exceptions import LoadSources
 
 
 @pytest.fixture
@@ -14,21 +15,13 @@ def pipeline_configs():
         "paths": {
             "pedidos": "pedidos.csv.gz",
             "pagamentos": "pagamentos.json.gz",
-            "output": "relatorio"
+            "output": "relatorio",
         },
         "file_options": {
-            "pedidos_csv": {
-                "compression": "gzip",
-                "header": True,
-                "sep": ";"
-            },
-            "pagamentos_json": {
-                "compression": "gzip"
-            }
+            "pedidos_csv": {"compression": "gzip", "header": True, "sep": ";"},
+            "pagamentos_json": {"compression": "gzip"},
         },
-        "transformer": {
-            "target_year": 2025
-        }
+        "transformer": {"target_year": 2025},
     }
 
 
@@ -64,33 +57,23 @@ def test_pipeline_calls_components_in_correct_order(pipeline_configs):
     pipeline.run(pipeline_configs)
 
     data_handler.load_pedidos.assert_called_once_with(
-        path="pedidos.csv.gz",
-        header=True,
-        sep=";",
-        compression="gzip"
+        path="pedidos.csv.gz", header=True, sep=";", compression="gzip"
     )
 
     data_handler.load_pagamentos.assert_called_once_with(
-        path="pagamentos.json.gz",
-        compression="gzip"
+        path="pagamentos.json.gz", compression="gzip"
     )
 
     assert transformer.mock_calls == [
         call.add_total_value(orders_df),
-        call.year_orders_filter(
-            orders_df,
-            target_year=2025
-        ),
+        call.year_orders_filter(orders_df, target_year=2025),
         call.false_negative_payments_filter(payments_df),
-        call.join_information(
-            orders_df,
-            payments_df=payments_df
-        ),
-        call.priorization(orders_df)
+        call.join_information(orders_df, payments_df=payments_df),
+        call.priorization(orders_df),
     ]
 
     data_handler.apply_output_schema.assert_called_once_with(orders_df)
-    data_handler.write_parquet.assert_called_once_with(df=orders_df,path="relatorio")
+    data_handler.write_parquet.assert_called_once_with(df=orders_df, path="relatorio")
 
 
 def test_pipeline_propagates_loading_error(pipeline_configs):
