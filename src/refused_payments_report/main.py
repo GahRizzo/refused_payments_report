@@ -27,7 +27,7 @@ def main() -> int:
         print(configs_pipeline)
         configs = configs_pipeline.configs
 
-        logger.info("▶️ Iniciando execução do pipeline.")
+        logger.info("▶️  Iniciando execução do pipeline.")
 
         APP_NAME = configs.get("spark",{}).get("app_name")
 

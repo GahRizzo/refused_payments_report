@@ -79,7 +79,7 @@ class DataHandler:
         try:
             schema = self._get_schema_pagamentos()
             df = self.spark.read.option("compression", compression).json(path, schema=schema)
-            logger.info("DataFrame de pagamentos carregado com sucesso.")
+            logger.info("✅ DataFrame de pagamentos carregado com sucesso.")
             return df
 
         except AnalysisException as e:
@@ -104,7 +104,7 @@ class DataHandler:
         try:
             schema = self._get_schema_pedidos()
             df = self.spark.read.option("compression", compression).csv(path, header=header, schema=schema, sep=sep)
-            logger.info("DataFrame de pedidos carregado com sucesso.")
+            logger.info("✅ DataFrame de pedidos carregado com sucesso.")
             return df
 
         except AnalysisException as e:
@@ -151,7 +151,7 @@ class DataHandler:
 
         try:
             df.write.mode("overwrite").parquet(path)
-            print(f"Dados salvos com sucesso em: {path}")
+            logger.info("✅ Relatório escrito e salvo com sucesso em: %s", path)
         
         except AnalysisException as e:
             raise WriteOutput(f"Falha de análise ao escrever relatório em '{path}'") from e
@@ -161,5 +161,3 @@ class DataHandler:
 
         except OSError as e:
             raise WriteOutput(f"Falha de I/O ao escrever relatório em '{path}'") from e
-
-        logger.info("Relatório escrito e salvo com sucesso em: %s", path)
