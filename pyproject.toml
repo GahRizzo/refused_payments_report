@@ -13,7 +13,7 @@ dependencies = [
 ]
 
 [project.scripts]
-refused-payments-report = "refused-payments-report:main"
+refused-payments-report = "refused_payments_report.main:cli"
 
 [build-system]
 requires = ["uv_build>=0.13.4,<0.14.0"]
