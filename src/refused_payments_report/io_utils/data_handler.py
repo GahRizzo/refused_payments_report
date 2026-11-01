@@ -5,7 +5,7 @@ from pyspark.sql.types import (StructType, StructField, StringType, LongType, Ar
 from pyspark.errors import AnalysisException, PySparkException
 
 # Self Dependencies
-from .exceptions import LoadSources
+from .exceptions import LoadSources, WriteOutput
 
 # Python Dependencies
 import logging
