@@ -1,5 +1,6 @@
-from io_utils.data_handler import DataHandler
-from processing.transformations import Transformation
+# Self Dependencies
+from refused_payments_report.io_utils.data_handler import DataHandler
+from refused_payments_report.processing.transformations import Transformation
 
 class Pipeline:
     """
