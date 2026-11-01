@@ -68,7 +68,7 @@ class DataHandler:
             StructField("data_criacao", TimestampType(), True)
         ])
 
-    def load_pagamentos(self, path: str, compression: str) -> DataFrame:
+    def load_pagamentos(self, path: str, compression: str | None = None) -> DataFrame:
         """
         Carrega o dataframe de pagamentos a partir de um arquivo JSON.
 
@@ -78,8 +78,16 @@ class DataHandler:
         """
         try:
             schema = self._get_schema_pagamentos()
-            df = self.spark.read.option("compression", compression).json(path, schema=schema)
+
+            reader = self.spark.read
+            
+            if compression is not None:
+                reader = reader.option("compression", compression)
+
+            df = reader.json(path, schema=schema)
+
             logger.info("✅ DataFrame de pagamentos carregado com sucesso.")
+            
             return df
 
         except AnalysisException as e:
@@ -88,7 +96,7 @@ class DataHandler:
         except PySparkException as e:
             raise LoadSources(f"Falha no Spark ao carregar pagamentos em '{path}'") from e
 
-    def load_pedidos(self, path: str, compression: str, header:bool, sep:str) -> DataFrame:
+    def load_pedidos(self, path: str, header:bool, sep:str, compression: str | None = None) -> DataFrame:
         """
         Carrega o dataframe de pedidos a partir de um arquivo CSV.
 
@@ -103,8 +111,16 @@ class DataHandler:
         """
         try:
             schema = self._get_schema_pedidos()
-            df = self.spark.read.option("compression", compression).csv(path, header=header, schema=schema, sep=sep)
+
+            reader = self.spark.read.option("header", header).option("sep", sep)
+
+            if compression is not None:
+                reader = reader.option("compression", compression)
+            
+            df = reader.csv(path,schema=schema)
+            
             logger.info("✅ DataFrame de pedidos carregado com sucesso.")
+            
             return df
 
         except AnalysisException as e:
