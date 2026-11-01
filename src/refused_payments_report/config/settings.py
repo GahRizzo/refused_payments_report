@@ -6,7 +6,7 @@ import logging
 from pyspark.errors import AnalysisException, PySparkException
 
 # Self Dependencies
-from config.exceptions import ConfigError
+from .exceptions import ConfigError
 
 logger = logging.getLogger(__name__)
 
