@@ -1,0 +1,20 @@
+version: 1
+disable_existing_loggers: False
+formatters:
+  padrao:
+    format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+    datefmt: "%Y-%m-%d %H:%M:%S"
+handlers:
+  console:
+    class: logging.StreamHandler
+    level: INFO
+    formatter: padrao
+    stream: ext://sys.stdout
+  file:
+    class: logging.FileHandler
+    level: INFO
+    formatter: padrao
+    filename: "ref-pay-log.log"
+root:
+  level: INFO
+  handlers: [console, file]

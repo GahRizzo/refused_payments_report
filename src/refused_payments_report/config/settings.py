@@ -53,7 +53,7 @@ class Configs:
             raise ConfigError("O arquivo YAML deve conter um dicionário de configurações.")
         
         # Seções obrigatórias
-        for section in ("spark","logging", "paths", "file_options", "transformer"):
+        for section in ("spark", "paths", "file_options", "transformer"):
             if not isinstance(configs.get(section), dict):
                 raise ConfigError(f"Seção obrigatória ausente ou inválida: '{section}'")
         

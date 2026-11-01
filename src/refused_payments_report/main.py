@@ -5,25 +5,21 @@ import sys
 # Pipeline App
 from session.spark_session import SparkSessionManager
 from config.settings import Configs
-from config.logging_config import LoggingConfig
+from config.logging import LoggingConfig
 from io_utils.data_handler import DataHandler
 from processing.transformations import Transformation
 from pipeline.pipeline import Pipeline
 
 
 def main() -> int:
-    
-    # Configuração básica para erros antes da leitura do YAML
-    logging.basicConfig(
-        level=logging.INFO,
-        format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
-    )
 
-    # Logger disponível antes do try
-    logger = logging.getLogger(__name__)
-
+    # Variáveis iniciais
     spark = None
     exit_code = 0
+
+    # Configuração independente do settings.yaml
+    LoggingConfig.configure("./config/logging.yaml")
+    logger = logging.getLogger(__name__)
 
     try:
         # Carregando configurações
@@ -31,12 +27,6 @@ def main() -> int:
         print(configs_pipeline)
         configs = configs_pipeline.configs
 
-        # Configurando Logging
-        LoggingConfig.configure(configs["logging"])
-        
-
-        # Inicializando Logger
-        logger = logging.getLogger(__name__)
         logger.info("▶️ Iniciando execução do pipeline.")
 
         APP_NAME = configs.get("spark",{}).get("app_name")
