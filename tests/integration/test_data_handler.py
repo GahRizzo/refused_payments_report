@@ -2,12 +2,13 @@
 # Python Dependencies
 import json
 from datetime import datetime
+from decimal import Decimal
 
 import pytest
 
 # Pyspark Dependencies
 from pyspark.sql.types import (
-    DoubleType,
+    DecimalType,
     StringType,
     TimestampType,
 )
@@ -86,11 +87,11 @@ def test_load_pagamentos_reads_nested_json(spark, tmp_path):
 
     assert len(rows) == 2
     assert rows["P001"].forma_pagamento == "PIX"
-    assert rows["P001"].valor_pagamento == 100.0
+    assert rows["P001"].valor_pagamento == Decimal("100.00")
     assert rows["P001"].status is False
     assert rows["P001"].avaliacao_fraude.fraude is False
     assert rows["P002"].avaliacao_fraude.score == 0.95
-    assert isinstance(result.schema["valor_pagamento"].dataType, DoubleType)
+    assert result.schema["valor_pagamento"].dataType == DecimalType(18, 2)
 
 
 def test_apply_output_schema_casts_and_orders_columns(spark):
@@ -115,7 +116,7 @@ def test_apply_output_schema_casts_and_orders_columns(spark):
     ]
 
     assert isinstance(result.schema["id_pedido"].dataType, StringType)
-    assert isinstance(result.schema["valor_total"].dataType, DoubleType)
+    assert result.schema["valor_total"].dataType == DecimalType(18, 2)
     assert isinstance(result.schema["data_criacao"].dataType, TimestampType)
 
     row = result.first()

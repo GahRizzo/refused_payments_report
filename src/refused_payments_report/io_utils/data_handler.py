@@ -7,8 +7,8 @@ from pyspark.sql import DataFrame, SparkSession
 from pyspark.sql.functions import col
 from pyspark.sql.types import (
     BooleanType,
-    DoubleType,
     DecimalType,
+    DoubleType,
     LongType,
     StringType,
     StructField,
@@ -45,7 +45,7 @@ class DataHandler:
             [
                 StructField("id_pedido", StringType(), True),
                 StructField("forma_pagamento", StringType(), True),
-                StructField("valor_pagamento", DecimalType(), True),
+                StructField("valor_pagamento", DecimalType(18, 2), True),
                 StructField("status", BooleanType(), True),
                 StructField("data_processamento", TimestampType(), True),
                 StructField(
@@ -69,7 +69,7 @@ class DataHandler:
             [
                 StructField("id_pedido", StringType(), True),
                 StructField("produto", StringType(), True),
-                StructField("valor_unitario", DecimalType(), True),
+                StructField("valor_unitario", DecimalType(18, 2), True),
                 StructField("quantidade", LongType(), True),
                 StructField("data_criacao", TimestampType(), True),
                 StructField("uf", StringType(), True),
@@ -87,7 +87,7 @@ class DataHandler:
                 StructField("uf", StringType(), True),
                 StructField("forma_pagamento", StringType(), True),
                 StructField("data_criacao", TimestampType(), True),
-                StructField("valor_total", DecimalType(), True),
+                StructField("valor_total", DecimalType(18, 2), True),
             ]
         )
 
