@@ -114,7 +114,11 @@ A pasta `data/output/` **não precisa existir no clone**: o Spark cria o destino
 
 ```bash
 git clone https://github.com/GahRizzo/refused_payments_report.git
+
 cd refused_payments_report
+
+pip install uv # Caso não tenha instalado, caso sim, ignorar.
+
 uv sync
 ```
 
