@@ -75,28 +75,53 @@ CSV de pedidos (.csv.gz)       JSON de pagamentos (.json.gz)
 
 ```text
 refused_payments_report/
+│
 ├── config/
-│   ├── logging.yaml
-│   └── settings.yaml
+│   ├── logging.yaml                    # Configuração dos logs
+│   └── settings.yaml                   # Parâmetros e caminhos do pipeline
+│
 ├── data/
 │   ├── input/
-│   │   ├── dataset-json-pagamentos/
-│   │   └── datasets-csv-pedidos/
-│   └── output/                    # Gerado na execução
+│   │   ├── dataset-json-pagamentos/     # Dados de pagamentos (JSON)
+│   │   └── datasets-csv-pedidos/        # Dados de pedidos (CSV)
+│   └── output/                          # Relatórios Parquet gerados na execução
+│
 ├── src/
 │   └── refused_payments_report/
-│       ├── config/                # Configurações e logging
-│       ├── io_utils/              # Leitura, schema e escrita
-│       ├── pipeline/              # Orquestração
-│       ├── processing/            # Transformações e regras de negócio
-│       ├── session/               # SparkSession
-│       └── main.py
+│       ├── config/
+│       │   ├── exceptions.py           # Exceções de configuração
+│       │   ├── logging.py              # Configuração do logging Python
+│       │   └── settings.py             # Carregamento e validação do YAML
+│       │
+│       ├── io_utils/
+│       │   ├── data_handler.py         # Leitura, schemas e escrita Parquet
+│       │   └── exceptions.py           # Exceções de entrada e saída
+│       │
+│       ├── processing/
+│       │   ├── transformations.py      # Regras de negócio e transformações
+│       │   └── exceptions.py           # Exceções de transformação
+│       │
+│       ├── pipeline/
+│       │   └── pipeline.py             # Orquestração do fluxo de dados
+│       │
+│       ├── session/
+│       │   └── spark_session.py        # Criação e configuração do Spark
+│       │
+│       └── main.py                     # Ponto de entrada da aplicação
+│
 ├── tests/
-│   ├── unit/
-│   ├── integration/
-│   └── conftest.py
-├── pyproject.toml
-└── uv.lock
+│   ├── unit/                            # Testes unitários e mocks
+│   ├── integration/                     # Testes com Spark e arquivos reais
+│   └── conftest.py                      # Fixtures compartilhadas do Pytest
+│
+├── .gitignore                           # Exclusões do Git
+├── .python-version                      # Versão do Python
+├── README.md                            # Documentação do projeto
+├── MANIFEST.in                          # Referência de empacotamento com setuptools
+├── pyproject.toml                       # Dependências, build e ferramentas
+├── requirements.txt                     # Dependências para ambientes pip
+├── requirements-dev.txt                 # Dependências de desenvolvimento
+└── uv.lock                              # Lockfile de dependências
 ```
 
 A pasta `data/output/` **não precisa existir no clone**: o Spark cria o destino quando grava o relatório. Os datasets de entrada devem estar presentes em `data/input/`, conforme os caminhos configurados no YAML.
