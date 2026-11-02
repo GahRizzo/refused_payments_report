@@ -1,0 +1,33 @@
+# ============================================================
+# ARQUIVO DE REFERÊNCIA - NÃO UTILIZADO PELO BUILD ATUAL
+# ============================================================
+#
+# Este projeto utiliza uv_build como backend de empacotamento.
+# As instruções abaixo documentam como os arquivos poderiam
+# ser distribuídos utilizando a ferramenta setuptools.
+#
+# As regras efetivas de build estão no pyproject.toml.
+# ============================================================
+
+# Documentação
+include README.md
+
+# Configurações da aplicação
+recursive-include config *.yaml *.yml
+
+# Datasets de entrada
+recursive-include data/input *.csv *.json *.gz
+
+# Testes automatizados
+recursive-include tests *.py
+
+# Exclusões
+prune .venv
+prune .ruff_cache
+prune .pytest_cache
+prune htmlcov
+prune data/output
+prune dist
+prune build
+
+global-exclude __pycache__ *.pyc *.pyo

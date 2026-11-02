@@ -57,3 +57,20 @@ select = [
     "I",   # Organização dos imports
     "B",   # Possíveis bugs
 ]
+
+[tool.uv.build-backend]
+source-include = [
+    "config/**",
+    "data/input/**",
+    "tests/**",
+]
+
+source-exclude = [
+    ".venv/**",
+    ".ruff_cache/**",
+    ".pytest_cache/**",
+    "htmlcov/**",
+    "data/output/**",
+    "dist/**",
+    "build/**",
+]

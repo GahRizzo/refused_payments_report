@@ -1,3 +1,18 @@
+# Ambiente virtual
+.venv/
+
+# Arquivos locais de ambiente
+.env
+.env.*
+!.env.example
+
+# Cache Python
+__pycache__/
+*.py[cod]
+
+# Ruff
+.ruff_cache/
+
 # Pytest
 .pytest_cache/
 
@@ -17,3 +32,12 @@ tests/tmp/
 
 # Arquivos gerados pelo pipeline
 /data/output/
+
+# Build e distribuição
+/dist/
+/build/
+*.egg-info/
+
+# Arquivos de IDE
+.vscode/
+.idea/
