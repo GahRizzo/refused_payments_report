@@ -25,7 +25,7 @@ def main() -> int:
     try:
         # Carregando configurações
         configs_pipeline = Configs()
-        print(configs_pipeline)
+        logger.info("\n⚙️  Configurações do pipeline: \n%s", configs_pipeline)
         configs = configs_pipeline.configs
 
         logger.info("▶️  Iniciando execução do pipeline.")

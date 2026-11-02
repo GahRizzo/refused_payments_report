@@ -1,7 +1,7 @@
 [project]
 name = "refused-payments-report"
 version = "0.1.0"
-description = "Add your description here"
+description = "Pipeline de dados em PySpark para processamento e análise de pagamentos recusados, com validações de qualidade e geração de relatórios em Parquet."
 readme = "README.md"
 authors = [
     { name = "GahRizzo", email = "62845690+GahRizzo@users.noreply.github.com" }

@@ -80,10 +80,7 @@ class Configs:
             raise ConfigError(
                 "file_options.pagamentos_json.compression' deve ser uma string."
             )
-        if (
-            not json_options.get("compression") == "gzip"
-            or json_options.get("compression") is None
-        ):
+        if json_options.get("compression") not in (None, "gzip"):
             raise ConfigError(
                 "'file_options.pagamentos_json.compression' aceita apenas o modelo de compressão 'gzip' ou None."
             )
@@ -98,7 +95,7 @@ class Configs:
             raise ConfigError(
                 "file_options.pedidos_csv.compression' deve ser uma string."
             )
-        if not compression == "gzip" or compression is None:
+        if compression not in (None, "gzip"):
             raise ConfigError(
                 "'file_options.pedidos_csv.compression' aceita apenas o modelo de compressão 'gzip' ou None."
             )
