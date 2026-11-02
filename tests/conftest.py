@@ -1,6 +1,8 @@
+# Pytest Dependences
 import pytest
-from pyspark.sql import SparkSession
 
+# PySpark Dependences
+from pyspark.sql import SparkSession
 
 @pytest.fixture(scope="session")
 def spark():

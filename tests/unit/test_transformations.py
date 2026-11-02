@@ -1,13 +1,12 @@
-# Pytest Dependencie
 # Python Dependencies
 from datetime import datetime
 
+# Pytest Dependencie
 import pytest
-
-from refused_payments_report.processing.exceptions import BusinessRuleError
 
 # Self Dependencies
 from refused_payments_report.processing.transformations import Transformation
+from refused_payments_report.processing.exceptions import BusinessRuleError
 
 
 def test_add_total_value_calculates_correct_amount(spark):

@@ -16,9 +16,9 @@ class Pipeline:
         """
         Executa o pipeline completo: carga das sources, transformação dos dados e materialização.
 
-        :Parâmetros:
-        data_handler (Class): Classe para carga e escrita dos dados de pagamentos e pedidos
-        data_transformer (Class): Classe para transformação dos dados de pagamentos e pedidos
+        Parâmetros:
+            data_handler (Class): Classe para carga e escrita dos dados de pagamentos e pedidos.
+            data_transformer (Class): Classe para transformação dos dados de pagamentos e pedidos.
         """
 
         # Declaração de variáveis

@@ -1,12 +1,11 @@
 # Python Dependencies
 import logging
 
-from pyspark.errors import AnalysisException, PySparkException
-
 # Spark Dependencies
 from pyspark.sql import DataFrame
 from pyspark.sql.functions import asc, col, count, isnan, year
 from pyspark.sql.types import StructType
+from pyspark.errors import AnalysisException, PySparkException
 
 # Self Dependencies
 from .exceptions import BusinessRuleError, TransformationError
@@ -24,9 +23,9 @@ class Transformation:
         """
         Valida as colunas necessárias para a transformação.
 
-        :Parâmetros:
-        df: dataframe que será verificado
-        columns: lista de colunas que serão testadas
+        Parâmetros:
+            df (DataFrame): dataframe que será verificado.
+            columns (list): lista de colunas que serão testadas.
 
         :Retorno:
         Nenhum, apenas faz um raise caso ocorra um erro
@@ -41,13 +40,13 @@ class Transformation:
 
     def add_total_value(self, df: DataFrame) -> DataFrame:
         """
-        Criando a coluna que calcula o valor total de um pedido, multiplicando quantidade por valor unitário
+        Criando a coluna que calcula o valor total de um pedido, multiplicando quantidade por valor unitário.
 
-        :Parâmetros:
-        df (DataFrame): Dataframe ao qual deseja aplicar a transformação
+        Parâmetros:
+            df (DataFrame): Dataframe ao qual deseja aplicar a transformação.
 
-        :Retorno:
-        Dataframe adicionando a coluna valor_total,
+        Retorno:
+            Dataframe adicionando a coluna valor_total.
         """
 
         try:
@@ -86,12 +85,12 @@ class Transformation:
         """
         Filtrando os pedidos para um ano específico do relatório.
 
-        :Parâmetros:
-        target_year (int): Ano que seja filtrar sobre uma data
-        df (DataFrame): Dataframe ao qual deseja aplicar a filtragem
+        Parâmetros:
+            target_year (int): Ano que seja filtrar sobre uma data.
+            df (DataFrame): Dataframe ao qual deseja aplicar a filtragem.
 
-        :Retorno:
-        Dataframe filtrado para o período especificado.
+        Retorno:
+            Dataframe filtrado para o período especificado.
 
         """
 
@@ -117,13 +116,13 @@ class Transformation:
 
     def false_negative_payments_filter(self, df: DataFrame) -> DataFrame:
         """
-        Filtrando pedidos com que tiveram o pagamento negado e não tiveram sinalização de fraude
+        Filtrando pedidos com que tiveram o pagamento negado e não tiveram sinalização de fraude.
 
-        :Parâmetros:
-        df (DataFrame): Dataframe que armazena as informações de pagamentos
+        Parâmetros:
+            df (DataFrame): Dataframe que armazena as informações de pagamentos.
 
-        :Retorno:
-        DataFrame filtrando apenas pedidos recusado e não fraudulentos
+        Retorno:
+            DataFrame filtrando apenas pedidos recusado e não fraudulentos.
         """
 
         try:
@@ -162,12 +161,12 @@ class Transformation:
         """
         Unificando as informações de pedidos e pagamentos em uma única tabela e selecione colunas de interesse
 
-        :Parâmetros:
-        payments_df (DataFrame): Dataframe que armazena as informações de pagamentos
-        orders_df (DataFrame): Dataframe que armazena as informações de pedidos
+        Parâmetros:
+            payments_df (DataFrame): Dataframe que armazena as informações de pagamentos.
+            orders_df (DataFrame): Dataframe que armazena as informações de pedidos.
 
-        :Retorno:
-        DataFrame de pagamento enriquecido com as informações referente ao pedido.
+        Retorno:
+            DataFrame de pagamento enriquecido com as informações referente ao pedido.
         """
 
         try:
@@ -233,11 +232,11 @@ class Transformation:
         """
         Aplicação de um ranqueamento ao dataframe levando em consideração a Unidade Federativa, Forma de Pagamentos e a Data de Criação
 
-        :Parâmetros:
-        df (Dataframe): Dataframe para priorização
+        Parâmetros:
+            df (Dataframe): Dataframe para priorização.
 
-        :Retorno:
-        Dataframe ordenado segundo as colunas uf, formna_pagamento e data_criacao
+        Retorno:
+            Dataframe ordenado segundo as colunas uf, formna_pagamento e data_criacao.
         """
 
         try:

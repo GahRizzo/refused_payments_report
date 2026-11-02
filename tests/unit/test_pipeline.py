@@ -1,12 +1,10 @@
 # Pytest Dependencies
 from unittest.mock import Mock, call
-
 import pytest
-
-from refused_payments_report.io_utils.exceptions import LoadSources
 
 # Self Dependencies
 from refused_payments_report.pipeline.pipeline import Pipeline
+from refused_payments_report.io_utils.exceptions import LoadSources
 
 
 @pytest.fixture

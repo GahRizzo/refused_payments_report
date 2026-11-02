@@ -1,7 +1,7 @@
-# PySpark Package
 # Python Dependencies
 import logging
 
+# PySpark Package
 from pyspark.errors import AnalysisException, PySparkException
 from pyspark.sql import DataFrame, SparkSession
 from pyspark.sql.functions import col
@@ -26,12 +26,12 @@ class DataHandler:
     """
     Classe responsável pela leitura (input) e escrita (output) de dados.
 
-    :Funções:
-    _get_schema_pagamentos: retorna o schema que o arquivo de pagamentos deve conter.
-    _get_schema_pedidos: retorna o schema que o arquivo de pedidos deve conter.
-    load_pagamentos: faz a leitura e carrega o arquivo de pagamentos baseado no schema declarado.
-    load_pedidos: faz a leitura e carrega o arquivo de pedidos baseado no schema declarado.
-    write_parquet: faz a escrita de um dataframe em um formato parquet
+    Métodos:
+        _get_schema_pagamentos: retorna o schema que o arquivo de pagamentos deve conter.
+        _get_schema_pedidos: retorna o schema que o arquivo de pedidos deve conter.
+        load_pagamentos: faz a leitura e carrega o arquivo de pagamentos baseado no schema declarado.
+        load_pedidos: faz a leitura e carrega o arquivo de pedidos baseado no schema declarado.
+        write_parquet: faz a escrita de um dataframe em um formato parquet.
     """
 
     def __init__(self, spark: SparkSession):
@@ -95,9 +95,9 @@ class DataHandler:
         """
         Carrega o dataframe de pagamentos a partir de um arquivo JSON.
 
-        :Parâmetros:
-        path (str): caminho onde os arquivos que serão lidos estão.
-        compression (str): tipo de compressão adotado para os arquivos.
+        Parâmetros:
+            path (str): caminho onde os arquivos que serão lidos estão.
+            compression (str): tipo de compressão adotado para os arquivos.
         """
         try:
             schema = self._get_schema_pagamentos()
@@ -129,14 +129,14 @@ class DataHandler:
         """
         Carrega o dataframe de pedidos a partir de um arquivo CSV.
 
-        :Parâmetros:
-        path (str): caminho onde os arquivos que serão lidos estão.
-        compression (str): tipo de compressão adotado para os arquivos.
-        header (bool): sinaliza se o arquivo contém header ou não.
-        sep (sep): qual o tipo de separador de colunas adotado.
+        Parâmetros:
+            path (str): caminho onde os arquivos que serão lidos estão.
+            compression (str): tipo de compressão adotado para os arquivos.
+            header (bool): sinaliza se o arquivo contém header ou não.
+            sep (sep): qual o tipo de separador de colunas adotado.
 
-        :Retorno:
-        Dataframe contendo os dados carregados
+        Retorno:
+            Dataframe contendo os dados carregados.
         """
         try:
             schema = self._get_schema_pedidos()
@@ -164,11 +164,11 @@ class DataHandler:
         """
         Aplica os tipos e a ordem das colunas definidos no schema de saída.
 
-        :Parâmetros:
-        df: Dataframe do relatório de output ao qual deseja-se aplicar o schema.
+        Parâmetros:
+            df: Dataframe do relatório de output ao qual deseja-se aplicar o schema.
 
-        :Retorno:
-        Dataframe com as colunas convertidas para o formato do schema.
+        Retorno:
+            Dataframe com as colunas convertidas para o formato do schema.
         """
         schema = self._get_schema_output()
 
@@ -192,9 +192,9 @@ class DataHandler:
         """
         Escreve o relatório de output no formato de parquet para um path específico.
 
-        :Parâmetros:
-        dataframe (DataFrame): dataframe que deve ser salvo
-        path (str): caminho onde os arquivos parquet serão salvos.
+        Parâmetros:
+            dataframe (DataFrame): dataframe que deve ser salvo.
+            path (str): caminho onde os arquivos parquet serão salvos.
         """
 
         try:

@@ -19,8 +19,8 @@ class LoggingConfig:
         """
         Aplica a configuração de logging definida no YAML.
 
-        :Parmâmetros:
-        path (str): Caminho onde o arquivo .yaml com as configurações do logger está armazenado.
+        Parmâmetros:
+            path (str): Caminho onde o arquivo .yaml com as configurações do logger está armazenado.
         """
 
         try:

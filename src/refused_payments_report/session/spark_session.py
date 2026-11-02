@@ -1,3 +1,4 @@
+# PySpark Dependences
 from pyspark.sql import SparkSession
 
 
@@ -5,11 +6,11 @@ class SparkSessionManager:
     """
     Gerencia a criação e o acesso à sessão Spark.
 
-    :Parâmetros:
-    app_name (str): nome da aplicação desejado
+    Parâmetros:
+        app_name (str): nome da aplicação desejado.
 
-    :Retorno:
-    SparkSession configurada com o nome da sessão.
+    Retorno:
+        SparkSession configurada com o nome da sessão.
     """
 
     @staticmethod
@@ -17,8 +18,11 @@ class SparkSessionManager:
         """
         Cria e retorna uma sessão Spark.
 
-        :param app_name: Nome da aplicação Spark.
-        :return: Instância da SparkSession.
+        Parâmetros:
+            app_name (str): Nome da aplicação Spark.
+        
+        Retorno:
+            Instância da SparkSession.
         """
 
         spark = SparkSession.builder.appName(app_name).master("local[*]").getOrCreate()

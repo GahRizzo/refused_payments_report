@@ -12,11 +12,11 @@ logger = logging.getLogger(__name__)
 
 class Configs:
     """
-    Classe responsável por gerir a carga de configurações do Pipeline
+    Classe responsável por gerir a carga de configurações do Pipeline.
 
-    :Classes:
-    load_config: Carrega o arquivo .yaml de configurações do pipeline
-    print_config: Faz a exibição do arquivo YAML carregado.
+    Métodos:
+        load_config: Carrega o arquivo .yaml de configurações do pipeline.
+        print_config: Faz a exibição do arquivo YAML carregado.
     """
 
     def __init__(self, path: str = "./config/settings.yaml"):
@@ -27,11 +27,11 @@ class Configs:
         """
         Carrega um arquivo de configuração YAML.
 
-        :Parâmetro:
-        path(str): Caminho ao qual o yaml de configurações está salvo
+        Parâmetro:
+            path(str): Caminho ao qual o yaml de configurações está salvo.
 
-        :Retorno:
-        YAML carregado como uma variáveil para o ambiente
+        Retorno:
+            YAML carregado como uma variável para o ambiente.
         """
 
         try:
@@ -118,7 +118,7 @@ class Configs:
 
     def __str__(self) -> str:
         """
-        Representação legível das configurações.
+        Representação legível das configurações do YAML.
         """
         return yaml.safe_dump(
             self.configs, sort_keys=False, allow_unicode=True, default_flow_style=False

@@ -1,14 +1,11 @@
+# Third Dependencies
 from copy import deepcopy
-
-# Dependencias Externas
 import pytest
 import yaml
 
-from refused_payments_report.config.exceptions import ConfigError
-
 # Self Dependences
 from refused_payments_report.config.settings import Configs
-
+from refused_payments_report.config.exceptions import ConfigError
 
 @pytest.fixture
 def valid_config():
