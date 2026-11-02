@@ -26,8 +26,6 @@ def main() -> int:
         logger.info("\n⚙️  Configurações do pipeline: \n%s", configs_pipeline)
         configs = configs_pipeline.configs
 
-        logger.info("▶️  Iniciando execução do pipeline.")
-
         APP_NAME = configs.get("spark", {}).get("app_name")
 
         spark = SparkSessionManager.get_spark_session(app_name=APP_NAME)
@@ -37,6 +35,8 @@ def main() -> int:
         pipeline = Pipeline(
             data_handler=data_handler, data_transformer=data_transformer
         )
+        
+        logger.info("▶️  Iniciando execução do pipeline.")
 
         pipeline.run(configs=configs)
 
