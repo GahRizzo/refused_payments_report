@@ -16,6 +16,14 @@ logger = logging.getLogger(__name__)
 class Transformation:
     """
     Classe que contém as transformações e regras de negócio da aplicação.
+
+    Métodos:
+        _require_columns: método estático que verifica as colunas que são utilizadas em uma transformação.
+        add_total_value: calcula o valor total de um pedido.
+        year_orders_filter: filtra os dados de pedido para um ano target.
+        false_negative_payments_filter: filtra os dados de pagamento que foram recusados e não fraudulentos.
+        join_information: unifica os dados de pedidos e pagamentos em um único dataframe.
+        priorization: aplica a regra de negócios de priorização dos pedidos.
     """
 
     @staticmethod
