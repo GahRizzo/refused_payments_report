@@ -118,6 +118,7 @@ refused_payments_report/
 ├── .python-version                      # Versão do Python
 ├── README.md                            # Documentação do projeto
 ├── MANIFEST.in                          # Referência de empacotamento com setuptools
+├── Makefile                             # Atalhos opcionais para tarefas de desenvolvimento
 ├── pyproject.toml                       # Dependências, build e ferramentas
 ├── requirements.txt                     # Dependências para ambientes pip
 ├── requirements-dev.txt                 # Dependências de desenvolvimento
@@ -132,8 +133,11 @@ A pasta `data/output/` **não precisa existir no clone**: o Spark cria o destino
 - **Java/JDK compatível com a versão de PySpark utilizada**, disponível no ambiente
 - **uv** instalado
 - Git, para clonar o repositório
+- **GNU Make (opcional):** permite executar os atalhos definidos no `Makefile`. Não é uma dependência Python e não precisa ser adicionado ao `pyproject.toml`.
 
-> Execute os comandos a seguir **a partir da raiz do repositório**. Os caminhos dos arquivos de configuração e das fontes são relativos a esse diretório.
+O GNU Make geralmente já está disponível em ambientes Linux de desenvolvimento. Caso não esteja instalado, no Ubuntu/Debian utilize `sudo apt install make`; no macOS, instale as ferramentas de linha de comando do Xcode com `xcode-select --install`; no Windows, uma opção é utilizar WSL. Confira a disponibilidade com `make --version`.
+
+> **O GNU Make é opcional.** Todos os comandos essenciais também podem ser executados diretamente com `uv`. Execute os comandos a seguir **a partir da raiz do repositório**; os caminhos de configuração e das fontes são relativos a esse diretório.
 
 ## Instalação
 
@@ -149,6 +153,14 @@ uv sync
 
 O `uv sync` cria/sincroniza o ambiente virtual e instala o projeto com as dependências descritas no lockfile.
 
+**Alternativa com GNU Make:**
+
+```bash
+make install
+```
+
+Esse atalho utiliza `uv sync --locked` no Makefile proposto, verificando a consistência do lockfile sem atualizá-lo.
+
 ## Configuração
 
 O arquivo [`config/settings.yaml`](config/settings.yaml) define o nome da sessão Spark, os caminhos de entrada e saída, o formato dos arquivos e o ano filtrado:
@@ -161,7 +173,6 @@ paths:
   pagamentos: "./data/input/dataset-json-pagamentos/data/pagamentos/"
   pedidos: "./data/input/datasets-csv-pedidos/data/pedidos/"
   output: "./data/output/refused_payments_report"
-
 file_options:
   pagamentos_json:
     compression: "gzip"
@@ -184,6 +195,12 @@ Após instalar as dependências, execute:
 
 ```bash
 uv run refused-payments-report
+```
+
+**Alternativa com GNU Make:**
+
+```bash
+make run
 ```
 
 O comando acima requer este *entry point* configurado no `pyproject.toml`:
@@ -227,6 +244,15 @@ uv run pytest tests/integration/ -v
 uv run pytest tests/ --cov=refused_payments_report --cov-branch --cov-report=term-missing
 ```
 
+**Os mesmos fluxos podem ser executados com GNU Make:**
+
+```bash
+make test
+make test-unit
+make test-integration
+make coverage
+```
+
 O limite mínimo configurado no `pyproject.toml` é **80% de cobertura**. A meta de cobertura complementa, mas não substitui, a verificação de regras de negócio e cenários de falha.
 
 ## Qualidade do código
@@ -241,7 +267,19 @@ uv run ruff check --fix src/ tests/
 uv run black src/ tests/
 ```
 
-Recomenda-se executar os testes novamente após alterações automáticas no código.
+**Atalhos com GNU Make:**
+
+```bash
+make lint          # Ruff: análise estática
+make format-check  # Black: verificar formatação sem alterar arquivos
+make format        # Black: aplicar formatação
+make check         # Ruff + Black + testes com cobertura
+make build         # Gerar sdist e wheel
+```
+
+Para consultar os atalhos disponíveis, utilize `make help`. Recomenda-se executar os testes novamente após alterações automáticas no código.
+
+> Os alvos `make` documentados correspondem ao Makefile proposto para o projeto. Caso você tenha personalizado os nomes ou receitas localmente, mantenha esta lista sincronizada com o arquivo versionado.
 
 ## Tratamento de falhas e logs
 
