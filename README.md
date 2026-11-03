@@ -131,35 +131,60 @@ A pasta `data/output/` **não precisa existir no clone**: o Spark cria o destino
 
 - **Python 3.14 ou superior** (conforme `pyproject.toml`)
 - **Java/JDK compatível com a versão de PySpark utilizada**, disponível no ambiente
-- **uv** instalado
+- **uv** para instalar e executar as dependências Python. Pode ser instalado manualmente ou pelo alvo `make setup-uv` em ambientes Linux/macOS.
 - Git, para clonar o repositório
 - **GNU Make (opcional):** permite executar os atalhos definidos no `Makefile`. Não é uma dependência Python e não precisa ser adicionado ao `pyproject.toml`.
 
-O GNU Make geralmente já está disponível em ambientes Linux de desenvolvimento. Caso não esteja instalado, no Ubuntu/Debian utilize `sudo apt install make`; no macOS, instale as ferramentas de linha de comando do Xcode com `xcode-select --install`; no Windows, uma opção é utilizar WSL. Confira a disponibilidade com `make --version`.
-
-> **O GNU Make é opcional.** Todos os comandos essenciais também podem ser executados diretamente com `uv`. Execute os comandos a seguir **a partir da raiz do repositório**; os caminhos de configuração e das fontes são relativos a esse diretório.
+> **O GNU Make é opcional.** Ele oferece atalhos para preparar o ambiente e executar as tarefas do projeto, mas não substitui o `uv`. O alvo `make setup-uv` utiliza o instalador oficial do `uv` via `curl` e `sh` (Linux/macOS); revise essa etapa antes de executar scripts externos. Execute os comandos **a partir da raiz do repositório**, pois os caminhos de configuração e das fontes são relativos a esse diretório.
 
 ## Instalação
 
+Clone o repositório:
+
 ```bash
 git clone https://github.com/GahRizzo/refused_payments_report.git
-
 cd refused_payments_report
-
-pip install uv # Caso não tenha instalado, caso sim, ignorar.
-
-uv sync
 ```
 
-O `uv sync` cria/sincroniza o ambiente virtual e instala o projeto com as dependências descritas no lockfile.
+### Opção A — Preparação automática com GNU Make (Linux/macOS)
 
-**Alternativa com GNU Make:**
+Se você já possui GNU Make, pode instalar o `uv` (caso necessário) e sincronizar as dependências com um único comando:
 
 ```bash
-make install
+make setup
 ```
 
-Esse atalho utiliza `uv sync --locked` no Makefile proposto, verificando a consistência do lockfile sem atualizá-lo.
+Os alvos também podem ser executados separadamente:
+
+```bash
+make setup-uv  # Instala o uv, se ainda não estiver disponível
+make install   # Executa uv sync --locked
+```
+
+O `make setup-uv` usa o instalador oficial do `uv` por meio de `curl` e `sh`. Caso o executável seja instalado em `~/.local/bin`, a receita de `install` também procura nesse caminho. No Windows sem WSL, siga a instalação manual apropriada para o sistema.
+
+> `make install` **não reinstala o uv**: ele sincroniza somente as dependências do projeto. Já `make setup` coordena `setup-uv` e `install`. A instalação do GNU Make é um pré-requisito para esses atalhos.
+
+### Opção B — Instalação diretamente com uv (sem Make)
+
+Se o `uv` já estiver instalado:
+
+```bash
+uv sync --locked
+```
+Esse comando prepara o ambiente virtual e instala as dependências conforme o `uv.lock`, sem modificá-lo.
+
+Se ainda não estiver, instale-o seguindo a [documentação oficial do uv](https://docs.astral.sh/uv/getting-started/installation/) ou utilizar o comando `pip install uv` caso adote o uso do pip e depois execute `uv sync --locked`.
+
+### Ajuda dos comandos
+
+Para listar as tarefas disponíveis no `Makefile`:
+
+```bash
+make help
+```
+
+Executar apenas `make` também mostra a ajuda, pois `help` é o alvo padrão.
 
 ## Configuração
 
@@ -277,7 +302,7 @@ make check         # Ruff + Black + testes com cobertura
 make build         # Gerar sdist e wheel
 ```
 
-Para consultar os atalhos disponíveis, utilize `make help`. Recomenda-se executar os testes novamente após alterações automáticas no código.
+Para consultar todos os atalhos, utilize `make help` (ou simplesmente `make`). Os comandos `make setup`, `make setup-uv` e `make install` estão descritos na seção **Instalação**. Recomenda-se executar os testes novamente após alterações automáticas no código.
 
 > Os alvos `make` documentados correspondem ao Makefile proposto para o projeto. Caso você tenha personalizado os nomes ou receitas localmente, mantenha esta lista sincronizada com o arquivo versionado.
 

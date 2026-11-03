@@ -2,10 +2,12 @@
 
 .DEFAULT_GOAL := help
 
-UV := uv
+UV := $(shell command -v uv 2>/dev/null || echo $(HOME)/.local/bin/uv)
 
 help:
 	@echo "Comandos disponíveis:"
+	@echo "  make setup            - Instala o uv (se necessário) e sincroniza as dependências"
+	@echo "  make setup-uv         - Instala o uv caso não esteja disponível"
 	@echo "  make install          - Instala as dependências"
 	@echo "  make run              - Executa o pipeline"
 	@echo "  make test             - Executa todos os testes"
@@ -17,6 +19,16 @@ help:
 	@echo "  make format-check     - Verifica a formatação"
 	@echo "  make check            - Executa lint, formatação e testes"
 	@echo "  make build            - Gera os pacotes de distribuição"
+
+setup-uv:
+	@if command -v uv >/dev/null 2>&1 || [ -x "$(HOME)/.local/bin/uv" ]; then \
+		echo "uv já está instalado."; \
+	else \
+		echo "Instalando uv..."; \
+		curl -LsSf https://astral.sh/uv/install.sh | sh; \
+	fi
+
+setup: setup-uv install
 
 install:
 	$(UV) sync --locked
